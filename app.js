@@ -384,10 +384,13 @@
     document.querySelectorAll("#abas-aula .aba").forEach(function (aba) {
       aba.classList.toggle("ativa", aba.dataset.aba === Estado.aba);
     });
-    if (Estado.aba === "quiz") renderizarQuiz(aula);
-    else if (Estado.aba === "flashcards") renderizarFlashcards(aula);
+    if (Estado.aba === "flashcards") renderizarFlashcards(aula);
     else if (Estado.aba === "notas") renderizarNotas(aula);
-    else renderizarConteudo(curso, aula);
+    else {
+      // Conteúdo e quiz ficam juntos, nessa ordem.
+      renderizarConteudo(curso, aula);
+      renderizarQuiz(aula);
+    }
     renderizarSidebar();
   }
 
@@ -455,15 +458,23 @@
     if (temProxima) html.push('<button class="btn btn-ghost" data-action="proxima-aula">Próxima aula →</button>');
     html.push("</div>");
 
+    // O quiz é renderizado aqui, abaixo do conteúdo da aula.
+    html.push('<div id="quiz-aula" class="quiz-aula"></div>');
+
     document.getElementById("conteudo-aula").innerHTML = html.join("");
   }
 
   function renderizarQuiz(aula) {
-    const el = document.getElementById("conteudo-aula");
+    // Se alguma ação de quiz vier de outra aba, volta para "Conteúdo e quiz".
+    if (Estado.aba !== "conteudo") {
+      Estado.aba = "conteudo";
+      renderizarAula();
+      return;
+    }
+    const el = document.getElementById("quiz-aula");
+    if (!el) return;
     if (!aula.quiz.length) {
-      el.innerHTML = '<div class="estado-vazio"><span class="vazio-icone">🧠</span><h3>Sem quiz nesta aula</h3>' +
-        '<p>Você optou por não incluir quizzes, ou não foi possível gerar perguntas para este trecho.</p>' +
-        '<button class="btn btn-primary" data-action="ir-aba" data-aba="conteudo">Voltar ao conteúdo</button></div>';
+      el.innerHTML = '<div class="quiz-vazio-inline">🧠 Esta aula não tem quiz. Você pode seguir para a próxima aula ou revisar os flashcards.</div>';
       return;
     }
 

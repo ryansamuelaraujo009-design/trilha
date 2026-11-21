@@ -414,7 +414,9 @@ p { margin: 0; }
 .aula-nav { display: flex; gap: 9px; margin-top: 24px; flex-wrap: wrap; }
 .aula-nav .btn { flex: 1; }
 
-/* Quiz */
+/* Quiz (junto com o conteúdo da aula) */
+.quiz-aula { margin-top: 28px; padding-top: 24px; border-top: 2px solid var(--border); }
+.quiz-vazio-inline { padding: 14px 16px; border-radius: 12px; background: var(--surface-2); color: var(--text-soft); font-size: .82rem; line-height: 1.6; }
 .quiz-cabecalho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .quiz-cabecalho h3 { font-size: 1.15rem; }
 .quiz-contador { font-size: .75rem; color: var(--text-soft); font-weight: 800; }
