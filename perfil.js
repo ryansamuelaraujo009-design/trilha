@@ -277,7 +277,8 @@ window.TrilhaPerfil = (function () {
               String(Date.now()).slice(-4)
     };
     const lista = ler(CHAVE.certificados, []);
-    const existente = lista.findIndex(function (c) { return c.cursoId === curso.id && c.aluno === certificado.aluno; });
+    // Um curso = um certificado, mesmo que o aluno tenha editado o nome depois.
+    const existente = lista.findIndex(function (c) { return c.cursoId === curso.id; });
     if (existente !== -1) lista.splice(existente, 1);
     lista.unshift(certificado);
     salvar(CHAVE.certificados, lista.slice(0, 20));

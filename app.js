@@ -331,8 +331,15 @@
 
   /* ------------------------------ Curso e aulas */
   function progressoDoCurso(curso) {
-    const feitas = (Estado.progresso[curso.id] && Estado.progresso[curso.id].concluidas) || [];
-    return { feitas: feitas, percentual: curso.aulas.length ? Math.round(feitas.length / curso.aulas.length * 100) : 0 };
+    const registro = Estado.progresso[curso.id] || {};
+    const feitas = Array.isArray(registro.concluidas) ? registro.concluidas : [];
+    const total = curso.aulas.length;
+    return {
+      feitas: feitas,
+      percentual: total ? Math.round(feitas.length / total * 100) : 0,
+      concluido: total > 0 && feitas.length >= total,
+      concluidoEm: registro.concluidoEm || null
+    };
   }
 
   function renderizarCurso() {
@@ -442,7 +449,8 @@
     const concluida = feitas.indexOf(aula.id) !== -1;
     const temProxima = Estado.aulaAtual < curso.aulas.length - 1;
     html.push('<div class="aula-nav">');
-    html.push('<button class="btn ' + (concluida ? "btn-ghost" : "btn-primary") + '" data-action="marcar-concluida">' +
+    html.push('<button class="btn ' + (concluida ? "btn-ghost" : "btn-primary") + '" data-action="marcar-concluida"' +
+      (concluida ? ' disabled title="Esta aula já foi concluída"' : "") + ">" +
       (concluida ? "✓ Concluída" : "✓ Marcar como concluída") + "</button>");
     if (temProxima) html.push('<button class="btn btn-ghost" data-action="proxima-aula">Próxima aula →</button>');
     html.push("</div>");
@@ -553,11 +561,20 @@
 
   function marcarConcluida() {
     const curso = Estado.cursoAtual;
+    if (!curso) return;
     const aula = curso.aulas[Estado.aulaAtual];
-    if (!Estado.progresso[curso.id]) Estado.progresso[curso.id] = { concluidas: [], quiz: {} };
-    if (Estado.progresso[curso.id].concluidas.indexOf(aula.id) === -1) {
-      Estado.progresso[curso.id].concluidas.push(aula.id);
+    if (!Estado.progresso[curso.id]) Estado.progresso[curso.id] = { concluidas: [], quiz: {}, concluidoEm: null };
+    const registro = Estado.progresso[curso.id];
+    if (!Array.isArray(registro.concluidas)) registro.concluidas = [];
+
+    // Uma aula só pode gerar XP uma vez. O botão também fica desabilitado na UI.
+    if (registro.concluidas.indexOf(aula.id) !== -1) {
+      toast("Esta aula já foi concluída.");
+      renderizarAula();
+      return;
     }
+
+    registro.concluidas.push(aula.id);
     salvar(CHAVE.progresso, Estado.progresso);
     registrarGanho("aula", { minutos: curso.duracao });
     atualizarEstatisticas();
@@ -643,14 +660,25 @@
   /* ------------------------------ Biblioteca */
   function cartaoCurso(curso) {
     const progresso = progressoDoCurso(curso);
-    return '<article class="card-curso">' +
-      '<div class="card-curso-topo"><div class="card-curso-ico">' + (curso.pronto ? esc(curso.emoji || "📦") : (curso.offline ? "⚠️" : "📘")) + "</div>" +
-      "<div><h3>" + esc(curso.titulo) + "</h3><small>" + curso.aulas.length + " aulas · " +
+    const concluido = progresso.concluido;
+    const certificado = concluido && window.TrilhaPerfil
+      ? TrilhaPerfil.certificados().find(function (c) { return c.cursoId === curso.id; })
+      : null;
+    return '<article class="card-curso' + (concluido ? " card-curso-concluido" : "") + '">' +
+      '<div class="card-curso-topo"><div class="card-curso-ico">' +
+      (concluido ? "🏅" : (curso.pronto ? esc(curso.emoji || "📦") : (curso.offline ? "⚠️" : "📘"))) + "</div>" +
+      "<div><h3>" + esc(curso.titulo) +
+      (concluido ? ' <span class="curso-status">✓ Concluído</span>' : "") +
+      "</h3><small>" + curso.aulas.length + " aulas · " +
       esc(NIVEIS[curso.nivel] || "") + " · " + new Date(curso.criadoEm).toLocaleDateString("pt-BR") + "</small></div></div>" +
       '<div class="card-curso-barra"><i style="width:' + progresso.percentual + '%"></i></div>' +
-      "<small>" + progresso.feitas.length + " de " + curso.aulas.length + " aulas concluídas (" + progresso.percentual + "%)</small>" +
-      '<div class="card-curso-acoes"><button class="btn btn-primary btn-sm" data-action="abrir-curso" data-id="' + esc(curso.id) + '">Continuar →</button>' +
-      '<button class="btn btn-ghost btn-sm" data-action="excluir-curso" data-id="' + esc(curso.id) + '">🗑️</button></div></article>';
+      "<small>" + (concluido
+        ? "Curso concluído · " + (certificado ? "certificado disponível" : "certificado sendo gerado")
+        : progresso.feitas.length + " de " + curso.aulas.length + " aulas concluídas (" + progresso.percentual + "%)") + "</small>" +
+      '<div class="card-curso-acoes"><button class="btn btn-primary btn-sm" data-action="abrir-curso" data-id="' + esc(curso.id) + '">' +
+      (concluido ? "Revisar →" : "Continuar →") + "</button>" +
+      (certificado ? '<button class="btn btn-ghost btn-sm btn-icone" data-certificado="' + esc(certificado.id) + '" title="Ver certificado" aria-label="Ver certificado">🏅</button>' : "") +
+      '<button class="btn btn-ghost btn-sm btn-icone" data-action="excluir-curso" data-id="' + esc(curso.id) + '" title="Excluir curso" aria-label="Excluir curso">🗑️</button></div></article>';
   }
 
   function renderizarBiblioteca() {
@@ -874,8 +902,7 @@
     const curso = Estado.cursoAtual;
     if (!curso) return;
     const progresso = progressoDoCurso(curso);
-    document.getElementById("btn-certificado").hidden =
-      !(progresso.feitas.length === curso.aulas.length && curso.aulas.length > 0);
+    document.getElementById("btn-certificado").hidden = !progresso.concluido;
   }
 
   function mostrarCelebracao(conteudo, botoes) {
@@ -891,12 +918,26 @@
     if (!curso) return;
     atualizarBotaoCertificado();
     const progresso = progressoDoCurso(curso);
-    if (progresso.feitas.length !== curso.aulas.length || !curso.aulas.length) return;
-    const nome = TrilhaPerfil.usuario() ? TrilhaPerfil.usuario().nome : "Estudante";
+    if (!progresso.concluido) return;
+
+    if (!Estado.progresso[curso.id]) Estado.progresso[curso.id] = { concluidas: [], quiz: {}, concluidoEm: null };
+    const registro = Estado.progresso[curso.id];
     const jaEmitido = TrilhaPerfil.certificados().some(function (c) {
-      return c.cursoId === curso.id && c.aluno === nome;
+      return c.cursoId === curso.id;
     });
-    if (jaEmitido) return;
+
+    // Conclusão já registrada: não repete XP, certificado nem comemoração.
+    if (registro.concluidoEm || jaEmitido) {
+      if (!registro.concluidoEm) {
+        registro.concluidoEm = Date.now();
+        salvar(CHAVE.progresso, Estado.progresso);
+      }
+      renderizarBiblioteca();
+      return;
+    }
+
+    registro.concluidoEm = Date.now();
+    salvar(CHAVE.progresso, Estado.progresso);
 
     const ganho = TrilhaPerfil.registrar("curso", { cursoId: curso.id });
     const certificado = TrilhaPerfil.emitirCertificado(curso);
@@ -913,9 +954,32 @@
       '<button class="btn btn-primary" data-celebracao="certificado">🏅 Ver certificado</button>' +
       '<button class="btn btn-ghost" data-celebracao="fechar">Continuar estudando</button>'
     );
+    renderizarBiblioteca();
     const botaoCert = document.getElementById("btn-certificado");
     botaoCert.classList.add("pulso");
     setTimeout(function () { botaoCert.classList.remove("pulso"); }, 3600);
+  }
+
+  // Repara cursos antigos que já estavam 100% mas não tinham marcação/certificado.
+  function sincronizarConclusoes() {
+    if (!window.TrilhaPerfil) return;
+    const certificados = TrilhaPerfil.certificados();
+    let alterou = false;
+    Estado.cursos.forEach(function (curso) {
+      if (!progressoDoCurso(curso).concluido) return;
+      if (!Estado.progresso[curso.id]) Estado.progresso[curso.id] = { concluidas: [], quiz: {}, concluidoEm: null };
+      const registro = Estado.progresso[curso.id];
+      const certificado = certificados.find(function (c) { return c.cursoId === curso.id; });
+      if (!registro.concluidoEm) {
+        registro.concluidoEm = certificado ? (Date.parse(certificado.emissao) || Date.now()) : Date.now();
+        alterou = true;
+      }
+      if (!certificado) {
+        TrilhaPerfil.emitirCertificado(curso);
+        alterou = true;
+      }
+    });
+    if (alterou) salvar(CHAVE.progresso, Estado.progresso);
   }
 
   function registrarGanho(tipo, dados) {
@@ -1241,6 +1305,7 @@
 
     registrarEventos();
     registrarAbas();
+    sincronizarConclusoes();
     sincronizarWizard();
     renderizarFiltrosProntos();
     renderizarCursosProntos();

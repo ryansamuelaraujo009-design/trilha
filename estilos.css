@@ -131,6 +131,8 @@ body.tema-escuro .blob-2 { background: #186b5b; }
 .btn-ghost { background: var(--surface); border-color: var(--border); color: var(--text-soft); }
 .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
 .btn-sm { min-height: 38px; padding: 0 14px; font-size: .82rem; border-radius: 10px; }
+.btn:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-icone { flex: 0 0 38px; width: 38px; padding: 0; font-size: .95rem; }
 .btn-voltar-topo {
   display: inline-flex; align-items: center; gap: 6px;
   border: 0; background: none; color: var(--text-soft);
@@ -476,12 +478,20 @@ p { margin: 0; }
   transition: transform .18s, box-shadow .18s;
 }
 .card-curso:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.card-curso-concluido { border-color: var(--sec); }
 .card-curso-topo { display: flex; gap: 12px; align-items: center; }
 .card-curso-ico { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: var(--primary-soft); font-size: 1.3rem; flex: 0 0 auto; }
+.card-curso-concluido .card-curso-ico { background: var(--sec-soft); color: var(--sec); }
 .card-curso h3 { font-size: .98rem; overflow-wrap: anywhere; }
+.curso-status {
+  display: inline-flex; align-items: center; margin-left: 4px; padding: 3px 8px;
+  border-radius: 999px; background: var(--sec-soft); color: var(--sec);
+  font-size: .64rem; font-weight: 800; white-space: nowrap; vertical-align: middle;
+}
 .card-curso small { color: var(--text-soft); font-size: .72rem; }
 .card-curso-barra { height: 6px; border-radius: 4px; background: var(--border); overflow: hidden; }
 .card-curso-barra i { display: block; height: 100%; background: linear-gradient(90deg, var(--primary), var(--sec)); }
+.card-curso-concluido .card-curso-barra i { background: linear-gradient(90deg, var(--sec), #7bed9f); }
 .card-curso-acoes { display: flex; gap: 8px; margin-top: 2px; }
 .card-curso-acoes .btn { flex: 1; }
 .estado-vazio { text-align: center; padding: 54px 20px; background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius); }
