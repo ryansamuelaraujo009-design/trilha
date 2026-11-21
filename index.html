@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6c5ce7">
+  <meta name="description" content="Transforme qualquer assunto em aulas personalizadas, quizzes e flashcards usando informações confiáveis da web.">
+  <title>Trilha — Aulas personalizadas para qualquer assunto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div class="bg-blob blob-1" aria-hidden="true"></div>
+  <div class="bg-blob blob-2" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <button class="brand" data-nav="inicio" aria-label="Ir para o início">
+      <span class="brand-logo">🎓</span>
+      <span>trilha<span class="brand-dot">.</span></span>
+    </button>
+    <nav class="topnav" aria-label="Navegação principal">
+      <button class="topnav-link ativo" data-nav="inicio">Início</button>
+      <button class="topnav-link" data-nav="biblioteca">Minha biblioteca</button>
+      <button class="topnav-link" data-nav="como-funciona">Como funciona</button>
+    </nav>
+    <div class="topbar-acoes">
+      <span id="streak-topo" class="streak-pill" title="Dias seguidos estudando">🔥 0</span>
+      <button id="btn-perfil" class="btn-perfil" data-nav="perfil" aria-label="Abrir meu perfil">
+        <span id="avatar-topo" class="avatar-topo">👤</span><span id="nome-topo" class="nome-topo">Entrar</span>
+      </button>
+      <button id="btn-tema" class="icon-btn" aria-label="Alternar tema escuro" title="Alternar tema">🌙</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================================ INÍCIO -->
+    <section id="tela-inicio" class="tela ativa">
+      <div class="hero container">
+        <div class="hero-copy">
+          <span class="pill"><span class="pill-spark">✨</span> Aulas prontas em segundos</span>
+          <h1>Estude <span class="destaque">qualquer assunto</span> do seu jeito.</h1>
+          <p class="hero-sub">Digite um tema, escolha como prefere aprender e transforme informações confiáveis da web em aulas, quizzes e flashcards feitos para você.</p>
+
+          <form id="form-busca" class="search-box" autocomplete="off">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+            <input id="busca-assunto" type="search" placeholder="Ex.: Fotossíntese, Guerra Fria, Derivadas..." aria-label="Assunto que deseja estudar" required minlength="2">
+            <button type="submit" class="btn btn-primary btn-search">Criar aulas <span aria-hidden="true">→</span></button>
+            <div id="sugestoes" class="sugestoes" hidden></div>
+          </form>
+
+          <div class="temas-populares">
+            <span>Populares:</span>
+            <button class="chip-tema" data-tema="Fotossíntese">🌱 Fotossíntese</button>
+            <button class="chip-tema" data-tema="Inteligência artificial">🤖 Inteligência artificial</button>
+            <button class="chip-tema" data-tema="Guerra Fria">🌍 Guerra Fria</button>
+            <button class="chip-tema" data-tema="Matemática">📐 Matemática</button>
+          </div>
+
+          <div class="hero-stats">
+            <div><strong id="stat-cursos">0</strong><span>aulas criadas</span></div>
+            <div><strong id="stat-concluidas">0</strong><span>concluídas</span></div>
+            <div><strong>100%</strong><span>gratuito</span></div>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="float-card card-principal">
+            <div class="mini-top"><span class="mini-badge">AULA 1 DE 5</span><span class="mini-check">✓</span></div>
+            <div class="mini-thumb">🌱</div>
+            <h3>Como funciona a fotossíntese</h3>
+            <div class="mini-linhas"><i></i><i></i><i></i></div>
+            <div class="mini-progresso"><span></span></div>
+          </div>
+          <div class="float-card card-quiz">
+            <span class="quiz-emoji">🧠</span>
+            <div><strong>Quiz rápido</strong><small>4 de 5 acertos</small></div>
+            <span class="quiz-nota">80%</span>
+          </div>
+          <div class="float-card card-flash">
+            <span>🃏</span><strong>12 flashcards</strong><small>prontos para revisar</small>
+          </div>
+          <div class="orb-decor"></div>
+        </div>
+      </div>
+
+      <div id="painel-progresso" class="secao container">
+        <div class="progresso-card">
+          <div class="progresso-cabecalho">
+            <div>
+              <span class="pill pill-soft">🔥 Seu ritmo de estudos</span>
+              <h2>Você está evoluindo!</h2>
+            </div>
+            <button class="btn btn-ghost btn-sm" data-nav="perfil">Ver meu perfil →</button>
+          </div>
+          <div id="progresso-grid" class="progresso-grid"></div>
+          <div id="desafio-dia" class="desafio-dia"></div>
+        </div>
+      </div>
+
+      <div id="cursos-prontos" class="secao container">
+        <div class="secao-cabecalho">
+          <span class="pill pill-soft">📦 Acervo pronto para usar</span>
+          <h2>Comece por um curso pronto</h2>
+          <p>Escolha entre <strong id="contador-prontos">70</strong> cursos já montados de programação, robótica, psicologia e ensino médio. É só clicar e estudar — sem precisar gerar nada.</p>
+        </div>
+        <div class="prontos-controles">
+          <div id="filtros-prontos" class="filtros-prontos" role="tablist" aria-label="Categorias dos cursos prontos"></div>
+          <input id="busca-prontos" class="busca-prontos" type="search" placeholder="🔎 Buscar um curso pronto..." aria-label="Buscar curso pronto">
+        </div>
+        <div id="grid-prontos" class="grid-prontos"></div>
+        <div id="prontos-vazio" class="estado-vazio" hidden>
+          <span class="vazio-icone">🔍</span>
+          <h3>Nenhum curso encontrado</h3>
+          <p>Tente outro termo ou escolha uma categoria diferente.</p>
+        </div>
+      </div>
+
+      <div id="como-funciona" class="secao container">
+        <div class="secao-cabecalho">
+          <span class="pill pill-soft">Simples assim</span>
+          <h2>Do assunto à aula em 3 passos</h2>
+          <p>Sem cadastro, sem complicação. Você escolhe o que quer aprender e nós cuidamos do resto.</p>
+        </div>
+        <div class="grid-3">
+          <article class="feature-card">
+            <div class="feature-icon icon-roxo">🔎</div>
+            <span class="feature-num">01</span>
+            <h3>Escolha o tema</h3>
+            <p>Busque qualquer assunto. Nós consultamos fontes abertas da web para reunir conteúdo confiável.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon icon-verde">🎛️</div>
+            <span class="feature-num">02</span>
+            <h3>Personalize</h3>
+            <p>Defina seu nível, a profundidade, o tempo de cada aula e o que mais importa para você.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon icon-coral">🚀</div>
+            <span class="feature-num">03</span>
+            <h3>Estude e evolua</h3>
+            <p>Receba aulas organizadas, quizzes, flashcards e anotações que ficam salvas no seu navegador.</p>
+          </article>
+        </div>
+      </div>
+
+      <div id="cursos-recentes" class="secao container" hidden>
+        <div class="secao-cabecalho secao-cabecalho-linha">
+          <div>
+            <span class="pill pill-soft">Continue de onde parou</span>
+            <h2>Seus cursos recentes</h2>
+          </div>
+          <button class="btn btn-ghost" data-nav="biblioteca">Ver biblioteca →</button>
+        </div>
+        <div id="lista-recentes" class="grid-cursos"></div>
+      </div>
+
+      <div class="secao container faq-wrap">
+        <div class="secao-cabecalho">
+          <span class="pill pill-soft">Perguntas frequentes</span>
+          <h2>Como a Trilha funciona?</h2>
+        </div>
+        <div class="faq-lista">
+          <details class="faq-item">
+            <summary>De onde vêm as informações das aulas?</summary>
+            <p>Usamos a API pública da Wikipedia (e seus projetos irmãos em outros idiomas). O conteúdo é organizado em aulas, com os links das fontes sempre disponíveis dentro do curso.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Preciso pagar ou criar conta?</summary>
+            <p>Não. O site é gratuito, funciona direto no navegador e salva seu progresso localmente. Nenhuma chave de API é necessária.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Posso usar no celular?</summary>
+            <p>Sim! O layout foi pensado primeiro para telas pequenas, com navegação inferior, botões grandes e leitura confortável.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ PERSONALIZAÇÃO -->
+    <section id="tela-personalizar" class="tela">
+      <div class="container-estreito">
+        <button class="btn-voltar-topo" data-nav="inicio">← Voltar ao início</button>
+
+        <div class="wizard-header">
+          <span class="pill pill-soft">✨ Personalização</span>
+          <h2>Vamos montar suas aulas</h2>
+          <p>Responda algumas perguntas rápidas para criarmos um curso do seu jeito.</p>
+          <div class="stepper" role="tablist" aria-label="Etapas da personalização">
+            <button class="step ativo" data-step="1"><span class="step-num">1</span><span class="step-label">Assunto</span></button>
+            <button class="step" data-step="2"><span class="step-num">2</span><span class="step-label">Estilo</span></button>
+            <button class="step" data-step="3"><span class="step-num">3</span><span class="step-label">Ritmo</span></button>
+          </div>
+          <div class="step-bar"><i id="step-progress"></i></div>
+        </div>
+
+        <!-- Etapa 1 -->
+        <div class="etapa ativa" data-etapa="1">
+          <h3 class="etapa-titulo">O que você quer estudar?</h3>
+          <p class="etapa-desc">Escreva um tema, pessoa, conceito ou evento. Quanto mais específico, melhor.</p>
+          <label class="campo-label" for="personal-tema">Assunto</label>
+          <div class="campo-com-sugestoes">
+            <input id="personal-tema" class="input-grande" type="search" placeholder="Ex.: Revolução Industrial" autocomplete="off">
+            <div id="sugestoes-personal" class="sugestoes" hidden></div>
+          </div>
+          <label class="campo-label" for="personal-idioma">Idioma do conteúdo</label>
+          <select id="personal-idioma" class="input-grande">
+            <option value="pt">🇧🇷 Português</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="de">🇩🇪 Deutsch</option>
+          </select>
+          <div class="dica-box">
+            <span>💡</span>
+            <p><strong>Dica:</strong> tente “Biologia celular”, “Segunda Guerra Mundial” ou “Algoritmos de ordenação”.</p>
+          </div>
+        </div>
+
+        <!-- Etapa 2 -->
+        <div class="etapa" data-etapa="2">
+          <h3 class="etapa-titulo">Como você aprende melhor?</h3>
+          <p class="etapa-desc"> Adaptamos o texto, os exemplos e o tamanho das aulas.</p>
+
+          <span class="campo-label">Seu nível</span>
+          <div class="opcoes" data-grupo="nivel">
+            <button class="opcao selecionado" data-valor="iniciante"><span class="opcao-emoji">🌱</span><strong>Iniciante</strong><small>Começo do zero</small></button>
+            <button class="opcao" data-valor="intermediario"><span class="opcao-emoji">🚀</span><strong>Intermediário</strong><small>Já conheço o básico</small></button>
+            <button class="opcao" data-valor="avancado"><span class="opcao-emoji">🎯</span><strong>Avançado</strong><small>Quero me aprofundar</small></button>
+          </div>
+
+          <span class="campo-label">Profundidade do curso</span>
+          <div class="opcoes" data-grupo="profundidade">
+            <button class="opcao" data-valor="resumo"><span class="opcao-emoji">⚡</span><strong>Resumo</strong><small>3 aulas diretas</small></button>
+            <button class="opcao selecionado" data-valor="equilibrado"><span class="opcao-emoji">⚖️</span><strong>Equilibrado</strong><small>5 aulas completas</small></button>
+            <button class="opcao" data-valor="profundo"><span class="opcao-emoji">📚</span><strong>Profundo</strong><small>Até 8 aulas</small></button>
+          </div>
+
+          <span class="campo-label">Tempo por aula</span>
+          <div class="opcoes opcoes-3" data-grupo="duracao">
+            <button class="opcao opcao-compacta" data-valor="10"><strong>10 min</strong><small>Rápida</small></button>
+            <button class="opcao opcao-compacta selecionado" data-valor="20"><strong>20 min</strong><small>Ideal</small></button>
+            <button class="opcao opcao-compacta" data-valor="30"><strong>30 min</strong><small>Detalhada</small></button>
+          </div>
+
+          <span class="campo-label">Foco principal <small>(pode marcar vários)</small></span>
+          <div class="chips-multiplos" data-grupo="foco">
+            <button class="chip-selecionavel selecionado" data-valor="conceitos">🧩 Conceitos</button>
+            <button class="chip-selecionavel" data-valor="exemplos">💡 Exemplos</button>
+            <button class="chip-selecionavel" data-valor="historia">🕰️ História</button>
+            <button class="chip-selecionavel" data-valor="aplicacoes">🔧 Aplicações</button>
+            <button class="chip-selecionavel" data-valor="curiosidades">✨ Curiosidades</button>
+          </div>
+        </div>
+
+        <!-- Etapa 3 -->
+        <div class="etapa" data-etapa="3">
+          <h3 class="etapa-titulo">Como quer praticar?</h3>
+          <p class="etapa-desc">Escolha as ferramentas que aparecerão nas suas aulas.</p>
+
+          <div class="lista-toggles">
+            <label class="toggle-row">
+              <span class="toggle-icone">🧠</span>
+              <span class="toggle-texto"><strong>Quiz ao final de cada aula</strong><small>Questões geradas a partir do conteúdo</small></span>
+              <input type="checkbox" data-pref="quiz" checked>
+              <span class="switch"></span>
+            </label>
+            <label class="toggle-row">
+              <span class="toggle-icone">🃏</span>
+              <span class="toggle-texto"><strong>Flashcards</strong><small>Cardápio de termos para revisão rápida</small></span>
+              <input type="checkbox" data-pref="flashcards" checked>
+              <span class="switch"></span>
+            </label>
+            <label class="toggle-row">
+              <span class="toggle-icone">🖼️</span>
+              <span class="toggle-texto"><strong>Imagens e destaque visual</strong><small>Mostra a imagem principal do assunto</small></span>
+              <input type="checkbox" data-pref="imagens" checked>
+              <span class="switch"></span>
+            </label>
+          </div>
+
+          <span class="campo-label">Meta diária</span>
+          <div class="opcoes opcoes-4" data-grupo="meta">
+            <button class="opcao opcao-compacta" data-valor="1"><strong>1 aula</strong><small>Leve</small></button>
+            <button class="opcao opcao-compacta selecionado" data-valor="2"><strong>2 aulas</strong><small>Constante</small></button>
+            <button class="opcao opcao-compacta" data-valor="3"><strong>3 aulas</strong><small>Intenso</small></button>
+            <button class="opcao opcao-compacta" data-valor="5"><strong>5 aulas</strong><small>Imersão</small></button>
+          </div>
+
+          <span class="campo-label">Cor do seu tema</span>
+          <div class="cores-tema" data-grupo="cor">
+            <button class="cor-opcao selecionado" data-valor="roxo" style="--cor:#6c5ce7" aria-label="Roxo"></button>
+            <button class="cor-opcao" data-valor="verde" style="--cor:#00b894" aria-label="Verde"></button>
+            <button class="cor-opcao" data-valor="coral" style="--cor:#ff6b6b" aria-label="Coral"></button>
+            <button class="cor-opcao" data-valor="azul" style="--cor:#0984e3" aria-label="Azul"></button>
+            <button class="cor-opcao" data-valor="rosa" style="--cor:#e84393" aria-label="Rosa"></button>
+          </div>
+
+          <div class="resumo-prefs" id="resumo-prefs"></div>
+        </div>
+
+        <div class="wizard-actions">
+          <button id="wizard-voltar" class="btn btn-ghost" hidden>← Voltar</button>
+          <button id="wizard-avancar" class="btn btn-primary">Continuar →</button>
+          <button id="btn-gerar" class="btn btn-primary" hidden>✨ Gerar minhas aulas</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ GERANDO -->
+    <section id="tela-gerando" class="tela">
+      <div class="container-estreito gerando-wrap">
+        <div class="gerando-orbita">
+          <div class="orbita-1"></div><div class="orbita-2"></div>
+          <span class="orbita-icone">📚</span>
+        </div>
+        <span class="pill pill-soft">Montando seu curso</span>
+        <h2 id="gerando-titulo">Buscando informações...</h2>
+        <p class="gerando-sub">Estamos consultando fontes abertas e organizando tudo para você.</p>
+        <div class="progresso-geracao"><i id="gerando-bar"></i></div>
+        <strong id="gerando-pct" class="gerando-pct">0%</strong>
+        <ul class="gerando-etapas" id="gerando-etapas">
+          <li class="ativa"><span>🔎</span> Buscando o assunto na web</li>
+          <li><span>📄</span> Lendo e organizando o conteúdo</li>
+          <li><span>✂️</span> Dividindo em aulas</li>
+          <li><span>🧠</span> Criando quizzes e flashcards</li>
+        </ul>
+        <div class="curiosidade-box"><span>💡</span><p id="curiosidade-texto">Você sabia? Estudar em sessões curtas com pausas ajuda o cérebro a fixar melhor o conteúdo.</p></div>
+      </div>
+    </section>
+
+    <!-- ============================================ CURSO -->
+    <section id="tela-curso" class="tela">
+      <div class="curso-topo container">
+        <button class="btn-voltar-topo" data-nav="inicio">← Início</button>
+        <div class="curso-titulo">
+          <span id="curso-badge" class="pill pill-soft">Curso personalizado</span>
+          <h2 id="curso-titulo">Título do curso</h2>
+          <p id="curso-meta"></p>
+        </div>
+        <div class="curso-acoes">
+          <button id="btn-certificado" class="icon-btn" title="Ver certificado" aria-label="Ver certificado" hidden>🏅</button>
+          <button id="btn-favorito" class="icon-btn" title="Favoritar curso" aria-label="Favoritar curso">☆</button>
+          <button id="btn-compartilhar" class="icon-btn" title="Compartilhar curso" aria-label="Compartilhar curso">↗</button>
+        </div>
+      </div>
+      <div class="progresso-curso"><i id="progresso-curso-bar"></i></div>
+      <div class="layout-curso container">
+        <aside class="sidebar-aulas" id="sidebar-aulas" aria-label="Aulas do curso"></aside>
+        <div class="aula-area">
+          <div class="abas-aula" id="abas-aula" role="tablist">
+            <button class="aba ativa" data-aba="conteudo">📖 Conteúdo</button>
+            <button class="aba" data-aba="quiz">🧠 Quiz</button>
+            <button class="aba" data-aba="flashcards">🃏 Flashcards</button>
+            <button class="aba" data-aba="notas">✍️ Anotações</button>
+          </div>
+          <div id="conteudo-aula" class="conteudo-aula"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ BIBLIOTECA -->
+    <section id="tela-biblioteca" class="tela">
+      <div class="container">
+        <div class="secao-cabecalho secao-cabecalho-linha">
+          <div>
+            <span class="pill pill-soft">📚 Seu acervo</span>
+            <h2>Minha biblioteca</h2>
+            <p>Todos os cursos que você criou ficam salvos aqui, prontos para continuar.</p>
+          </div>
+          <button class="btn btn-primary" data-nav="personalizar">+ Novo curso</button>
+        </div>
+        <div id="lista-biblioteca" class="grid-cursos"></div>
+        <div id="biblioteca-vazia" class="estado-vazio" hidden>
+          <span class="vazio-icone">📭</span>
+          <h3>Sua biblioteca está vazia</h3>
+          <p>Crie seu primeiro curso a partir de qualquer assunto que você queira aprender.</p>
+          <button class="btn btn-primary" data-nav="inicio">Criar meu primeiro curso →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ LOGIN / CONTA LOCAL -->
+    <section id="tela-login" class="tela">
+      <div class="container-estreito">
+        <button class="btn-voltar-topo" data-nav="inicio">← Voltar ao início</button>
+        <div class="login-card">
+          <div class="login-lateral">
+            <span class="pill">👤 Seu espaço de estudos</span>
+            <h2>Seu aprendizado, do seu jeito.</h2>
+            <p>Crie um perfil para personalizar suas aulas, acompanhar sua evolução e guardar seus certificados.</p>
+            <ul class="login-lista">
+              <li>🎯 Metas diárias e sequência de estudos</li>
+              <li>🏅 Conquistas e certificados de conclusão</li>
+              <li>🎨 Avatar, tema e preferências de estudo</li>
+            </ul>
+          </div>
+          <div class="login-principal">
+            <div class="login-abas" role="tablist" aria-label="Entrar ou criar conta">
+              <button class="login-aba ativa" data-login-aba="entrar">Entrar</button>
+              <button class="login-aba" data-login-aba="criar">Criar conta</button>
+            </div>
+            <form id="form-login" class="login-form">
+              <div id="campo-nome" class="campo-form" hidden>
+                <label for="login-nome">Seu nome</label>
+                <input id="login-nome" type="text" autocomplete="name" placeholder="Como quer ser chamado?">
+              </div>
+              <div class="campo-form">
+                <label for="login-email">E-mail</label>
+                <input id="login-email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required>
+              </div>
+              <div class="campo-form">
+                <label for="login-senha">Senha</label>
+                <input id="login-senha" type="password" autocomplete="current-password" placeholder="Mínimo de 4 caracteres" required minlength="4">
+              </div>
+              <button type="submit" id="login-submit" class="btn btn-primary btn-full">Entrar →</button>
+            </form>
+            <p class="aviso-local">🔒 <strong>Conta local:</strong> seus dados ficam apenas neste navegador. Não use uma senha real.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ PERFIL -->
+    <section id="tela-perfil" class="tela">
+      <div class="container">
+        <div class="secao-cabecalho secao-cabecalho-linha">
+          <div>
+            <span class="pill pill-soft">👤 Meu espaço</span>
+            <h2>Meu perfil</h2>
+            <p>Personalize sua conta, acompanhe seu progresso e celebre suas conquistas.</p>
+          </div>
+          <button id="btn-sair" class="btn btn-ghost btn-sm" hidden>Sair da conta</button>
+        </div>
+        <div class="perfil-layout">
+          <aside id="perfil-cartao" class="perfil-cartao"></aside>
+          <div class="perfil-principal">
+            <div class="perfil-abas" id="perfil-abas" role="tablist" aria-label="Áreas do perfil">
+              <button class="perfil-aba ativa" data-perfil-aba="dados">✏️ Dados</button>
+              <button class="perfil-aba" data-perfil-aba="estudos">📊 Estudos</button>
+              <button class="perfil-aba" data-perfil-aba="conquistas">🏅 Conquistas</button>
+              <button class="perfil-aba" data-perfil-aba="certificados">📜 Certificados</button>
+            </div>
+            <div id="perfil-conteudo" class="perfil-conteudo"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ CERTIFICADO -->
+    <section id="tela-certificado" class="tela">
+      <div class="container-estreito">
+        <div class="cert-acoes">
+          <button class="btn-voltar-topo" data-nav="perfil">← Voltar ao perfil</button>
+          <div class="cert-acoes-botoes">
+            <button id="btn-imprimir-cert" class="btn btn-primary btn-sm">🖨️ Imprimir / salvar PDF</button>
+            <button id="btn-png-cert" class="btn btn-ghost btn-sm">⬇️ Baixar imagem</button>
+          </div>
+        </div>
+        <div id="certificado-area"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Navegação inferior">
+    <button data-nav="inicio" class="ativo"><span class="bottom-ico">🏠</span><span>Início</span></button>
+    <button data-nav="biblioteca"><span class="bottom-ico">📚</span><span>Biblioteca</span></button>
+    <button data-nav="personalizar" class="bottom-criar"><span class="bottom-ico">✨</span><span>Criar</span></button>
+    <button data-nav="perfil"><span class="bottom-ico">👤</span><span>Perfil</span></button>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div id="celebracao" class="modal-fundo" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="celebracao-titulo">
+      <div id="celebracao-conteudo"></div>
+      <div id="celebracao-acoes" class="modal-acoes"></div>
+    </div>
+  </div>
+
+  <script src="js/api.js" defer></script>
+  <script src="js/gerador.js" defer></script>
+  <script src="js/cursos-prontos.js" defer></script>
+  <script src="js/perfil.js" defer></script>
+  <script src="js/certificado.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
