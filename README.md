@@ -44,17 +44,18 @@ O site é só HTML/CSS/JS, então qualquer host estático serve. O progresso, pe
 
 ```
 trilha/
-├── index.html          # todas as telas (SPA)
-├── css/estilos.css     # visual vibrante, responsivo e tema escuro
-├── js/
-│   ├── api.js          # integração com a API da Wikimedia
-│   ├── cursos-prontos.js # catálogo com 71 cursos prontos (incl. Medicina)
-│   ├── gerador.js      # extração e montagem das aulas, quizzes e flashcards
-│   ├── perfil.js       # conta local, XP, níveis, sequência e conquistas
-│   ├── certificado.js  # certificado imprimível e exportável em PNG
-│   └── app.js          # interface, navegação e persistência
+├── index.html            # todas as telas (SPA)
+├── estilos.css           # visual vibrante, responsivo e tema escuro
+├── api.js                # integração com a API da Wikimedia
+├── cursos-prontos.js     # catálogo com 71 cursos prontos (incl. Medicina)
+├── gerador.js            # extração e montagem das aulas, quizzes e flashcards
+├── perfil.js             # conta local, XP, níveis, sequência e conquistas
+├── certificado.js        # certificado imprimível e exportável em PNG
+├── app.js                # interface, navegação e persistência
 └── README.md
 ```
+
+> No GitHub Pages os arquivos ficam na raiz do repositório; o index.html já usa esses caminhos relativos.
 
 ## Observações
 
